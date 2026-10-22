@@ -1,0 +1,137 @@
+
+# ============================================================
+# SALES FORECASTING - GITIGNORE
+# ============================================================
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================================
+# DATASETS
+# ============================================================
+
+# Raw datasets
+data/raw/*
+!data/raw/.gitkeep
+
+# Processed datasets
+data/processed/*
+!data/processed/.gitkeep
+
+# Large data files
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.pkl
+
+# ============================================================
+# TRAINED ML MODELS
+# ============================================================
+
+models/*
+!models/.gitkeep
+
+*.joblib
+*.onnx
+*.pt
+*.pth
+*.ckpt
+
+# ============================================================
+# REPORTS AND GENERATED OUTPUTS
+# ============================================================
+
+# Generated CSV reports
+reports/*.csv
+
+# Generated charts
+reports/*.png
+reports/*.jpg
+reports/*.jpeg
+reports/*.html
+
+# Logs
+*.log
+logs/
+*.tmp
+
+# ============================================================
+# JUPYTER NOTEBOOK
+# ============================================================
+
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# ============================================================
+# FRONTEND - REACT / NODE
+# ============================================================
+
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================================
+# BACKEND
+# ============================================================
+
+*.sqlite3
+instance/
+
+# ============================================================
+# TESTING AND COVERAGE
+# ============================================================
+
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+test-results/
+
+# ============================================================
+# BUILD AND DISTRIBUTION
+# ============================================================
+
+*.whl
+*.tar.gz
+pip-wheel-metadata/
+site/
