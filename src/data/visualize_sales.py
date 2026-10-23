@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # ============================================================
-# PROJECT PATHS
+# PATHS
 # ============================================================
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
@@ -20,7 +20,7 @@ def main():
     if not TRAIN_FILE.exists():
         raise FileNotFoundError(f"Dataset not found: {TRAIN_FILE}")
 
-    print("Loading sales dataset...")
+    print("Loading sales data...")
     df = pd.read_csv(TRAIN_FILE, parse_dates=["date"])
 
     # ========================================================
@@ -34,10 +34,10 @@ def main():
 
     monthly_sales = daily_sales.resample("MS").sum()
 
-    # Daily sales plot
+    # Daily sales
     plt.figure(figsize=(14, 6))
     plt.plot(daily_sales.index, daily_sales.values, linewidth=0.8)
-    plt.title("Daily Total Sales Over Time")
+    plt.title("Daily Retail Sales Trend")
     plt.xlabel("Date")
     plt.ylabel("Total Sales")
     plt.grid(True, alpha=0.3)
@@ -45,16 +45,11 @@ def main():
     plt.savefig(REPORT_DIR / "daily_sales_trend.png", dpi=150)
     plt.close()
 
-    # Monthly sales plot
+    # Monthly sales
     plt.figure(figsize=(14, 6))
-    plt.plot(
-        monthly_sales.index,
-        monthly_sales.values,
-        marker="o",
-        markersize=3,
-        linewidth=1.5,
-    )
-    plt.title("Monthly Total Sales Over Time")
+    plt.plot(monthly_sales.index, monthly_sales.values,
+             marker="o", markersize=3)
+    plt.title("Monthly Retail Sales Trend")
     plt.xlabel("Month")
     plt.ylabel("Total Sales")
     plt.grid(True, alpha=0.3)
@@ -63,17 +58,17 @@ def main():
     plt.close()
 
     # ========================================================
-    # 2. AVERAGE SALES BY DAY OF WEEK
+    # 2. AVERAGE SALES BY WEEKDAY
     # ========================================================
-    df["day_of_week"] = df["date"].dt.dayofweek
-
     weekday_names = [
         "Monday", "Tuesday", "Wednesday", "Thursday",
         "Friday", "Saturday", "Sunday"
     ]
 
+    df["weekday"] = df["date"].dt.dayofweek
+
     weekday_sales = (
-        df.groupby("day_of_week")["sales"]
+        df.groupby("weekday")["sales"]
         .mean()
         .reindex(range(7))
     )
@@ -81,8 +76,8 @@ def main():
     plt.figure(figsize=(10, 5))
     plt.bar(weekday_names, weekday_sales.values)
     plt.title("Average Sales by Day of Week")
-    plt.xlabel("Day")
-    plt.ylabel("Average Sales per Store and Product Family")
+    plt.xlabel("Day of Week")
+    plt.ylabel("Average Sales per Store and Family")
     plt.xticks(rotation=25)
     plt.grid(axis="y", alpha=0.3)
     plt.tight_layout()
@@ -95,8 +90,7 @@ def main():
     family_sales = (
         df.groupby("family")["sales"]
         .sum()
-        .sort_values(ascending=False)
-        .head(10)
+        .nlargest(10)
         .sort_values()
     )
 
@@ -111,31 +105,35 @@ def main():
     plt.close()
 
     # ========================================================
-    # 4. SALES QUALITY CHECKS
+    # 4. ZERO-SALES ANALYSIS
     # ========================================================
-    zero_sales_count = (df["sales"] == 0).sum()
-    zero_sales_percentage = (df["sales"] == 0).mean() * 100
+    zero_count = int((df["sales"] == 0).sum())
+    zero_percentage = (df["sales"] == 0).mean() * 100
 
-    print("\nSALES SUMMARY")
+    print("\n" + "=" * 55)
+    print("SALES ANALYSIS RESULTS")
+    print("=" * 55)
+
     print(f"Total records: {len(df):,}")
-    print(f"Total daily dates: {daily_sales.size:,}")
-    print(f"Total monthly periods: {monthly_sales.size:,}")
-    print(f"Total sales across dataset: {df['sales'].sum():,.2f}")
+    print(f"Daily dates: {len(daily_sales):,}")
+    print(f"Monthly periods: {len(monthly_sales):,}")
+    print(f"Total sales: {df['sales'].sum():,.2f}")
 
-    print("\nZERO-SALES CHECK")
-    print(f"Zero-sales records: {zero_sales_count:,}")
-    print(f"Zero-sales percentage: {zero_sales_percentage:.2f}%")
+    print("\nZERO-SALES ANALYSIS")
+    print(f"Zero-sales records: {zero_count:,}")
+    print(f"Zero-sales percentage: {zero_percentage:.2f}%")
 
-    print("\nAVERAGE SALES BY DAY OF WEEK")
+    print("\nAVERAGE SALES BY WEEKDAY")
     print(weekday_sales.rename(index=dict(enumerate(weekday_names))).round(2))
+
+    print("\nTOP 10 PRODUCT FAMILIES")
+    print(family_sales.sort_values(ascending=False).round(2))
 
     print("\nMONTHLY SALES SUMMARY")
     print(monthly_sales.describe().round(2))
 
-    print("\nCharts saved to:")
-    print(REPORT_DIR)
-
-    print("\nVisualization completed successfully!")
+    print("\nCharts saved in:", REPORT_DIR)
+    print("Visualization completed successfully!")
 
 
 if __name__ == "__main__":
