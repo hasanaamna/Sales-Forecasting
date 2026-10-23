@@ -1,7 +1,7 @@
 
 from datetime import date, timedelta
 from pathlib import Path
-
+from pydantic import BaseModel, Field
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException,Query
@@ -165,9 +165,13 @@ def health():
         "data_exists": DATA_FILE.exists(),
     }
 
+class ForecastRequest(BaseModel):
+    horizon: int = Field(..., ge=1, le=7)
+
 
 @app.post("/forecast")
 def forecast(request: ForecastRequest):
+    horizon = request.horizon
     try:
         artifact, df = load_resources()
         model = artifact["model"]
