@@ -175,7 +175,7 @@ Model selection will be based on validation results rather than assumptions abou
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/hasanaamna
+git clone https://github.com/hasanaamna/Sales-Forecasting
 cd Sales-Forecasting
 ```
 
