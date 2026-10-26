@@ -117,9 +117,14 @@ def main():
         recursive_predictions = []
 
         for date in test.index:
-            calendar_row = df.loc[date]
+            # Match the deployed API: future dates default to non-holiday.
+            calendar_row = {"is_holiday": 0}
+
             X = make_features(date, history, calendar_row)
             prediction = max(0.0, float(model.predict(X)[0]))
+
+            recursive_predictions.append(prediction)
+            history.loc[date] = prediction
 
             recursive_predictions.append(prediction)
             history.loc[date] = prediction
